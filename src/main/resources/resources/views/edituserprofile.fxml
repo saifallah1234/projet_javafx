@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="borderPane" maxHeight="620.0" maxWidth="1040.0" prefHeight="620.0" prefWidth="1040.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="..\controllers\EditUserProfileController">
+   <center>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="496.0" vbarPolicy="ALWAYS" vmin="1.0" vvalue="1.0" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox alignment="CENTER" prefHeight="545.0" prefWidth="1040.0" spacing="10.0">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="18.0" prefWidth="136.0" text="profile picture : " />
+                              <Button onAction="#browseForImage" prefHeight="26.0" prefWidth="172.0" text="Browse" />
+                              <Button onAction="#editImage" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="18.0" prefWidth="135.0" text="videoCV : " />
+                              <Button onAction="#browseForVidecv" prefHeight="26.0" prefWidth="172.0" text="Browse" />
+                              <Button onAction="#editVideocv" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="18.0" prefWidth="135.0" text=" Name :" />
+                              <TextField fx:id="NameField" prefHeight="26.0" prefWidth="317.0" />
+                              <Button onAction="#editName" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="18.0" prefWidth="135.0" text=" Bio :" />
+                              <TextArea fx:id="BioArea" prefHeight="66.0" prefWidth="317.0" />
+                              <Button onAction="#editBio" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="18.0" prefWidth="135.0" text="skills :" />
+                              <TextArea fx:id="skillsTextarea" prefHeight="100" prefWidth="317.0" />
+                              <Button onAction="#editSkills" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefWidth="135.0" text="expreience : " />
+                              <TextArea fx:id="experience" prefHeight="100" prefWidth="317.0" />
+                              <Button onAction="#editexperience" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label alignment="CENTER" prefHeight="18.0" prefWidth="135.0" text="Projects :" />
+                              <TextArea fx:id="ProjectsTextArea" prefHeight="100" prefWidth="317.0" />
+                              <Button onAction="#editProjects" prefHeight="26.0" prefWidth="145.0" text="edit and save" />
+                           </children>
+                        </HBox>
+                        <Button onAction="#returnToMainProfile" prefHeight="26.0" prefWidth="464.0" text="Return to Main Profile" />
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </center>
+   <left>
+      <VBox maxHeight="1.7976931348623157E308" prefWidth="228.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox fx:id="onlineUsersHbox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="217.0" stylesheets="@../styles/ListViewStyle.css">
+               <children>
+                  <Label prefHeight="50.0" prefWidth="124.0" text="Online Users:" textAlignment="CENTER" textFill="#fc6747">
+                     <font>
+                        <Font name="SansSerif Regular" size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <opaqueInsets>
+                        <Insets bottom="10.0" />
+                     </opaqueInsets>
+                  </Label>
+                  <Label fx:id="onlineCountLabel" prefHeight="48.0" prefWidth="94.0" text="0" textFill="#fc6747">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <font>
+                        <Font name="SansSerif Regular" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <ListView fx:id="userList" focusTraversable="false" maxHeight="1.7976931348623157E308" prefHeight="219.0" prefWidth="228.0" style="-fx-border-image-width: 0;" stylesheets="@../styles/ListViewStyle.css">
+            </ListView>
+            <VBox>
+              <children>
+                  <Button mnemonicParsing="false" onAction="#showProfile" prefHeight="60.0" prefWidth="228.0" text="Your Profile" />
+                  <Button mnemonicParsing="false" onAction="#openChat" prefHeight="60.0" prefWidth="228.0" text="Messages" />
+                  <Button mnemonicParsing="false" onAction="#HandleNotificationButton" prefHeight="60.0" prefWidth="228.0" text="Notifications" />
+                  <Button layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#HandleSettingsButton" prefHeight="60.0" prefWidth="228.0" text="Settings" />
+                  <Button mnemonicParsing="false" onAction="#HandleLogoutButton" prefHeight="60.0" prefWidth="228.0" text="Logout" textFill="#e80a0a" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+   <top>
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #031c30;" BorderPane.alignment="CENTER">
+         <center>
+            <ImageView fitHeight="79.0" fitWidth="522.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../images/fxchat.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets right="100.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </center>
+         <right>
+            <HBox prefHeight="79.0" prefWidth="167.0" stylesheets="@../styles/ButtonStyle.css" BorderPane.alignment="CENTER">
+               <children>
+
+                  <ImageView fitHeight="22.0" fitWidth="21.0" onMousePressed="#closeApplication" pickOnBounds="true" preserveRatio="true" styleClass="button">
+                     <image>
+                        <Image url="@../images/close_normal.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="30.0" top="30.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
+            </HBox>
+         </right>
+         <left>
+            <HBox prefWidth="259.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fx:id="userImageView" fitHeight="69.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/default.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <VBox>
+                     <HBox.margin>
+                        <Insets left="10.0" top="30.0" />
+                     </HBox.margin>
+                     <children>
+                        <Label fx:id="usernameLabel" text="default" textFill="#fa6648">
+                           <font>
+                              <Font name="HelveticaNeue Medium" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="statusComboBox" prefHeight="25.0" prefWidth="101.0" promptText="Online" stylesheets="@../styles/ComboBox.css">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Online" />
+                                 <String fx:value="Away" />
+                                 <String fx:value="Busy" />
+                              </FXCollections>
+                           </items>
+                        </ComboBox>
+                     </children>
+                  </VBox>
+               </children></HBox>
+         </left>
+      </BorderPane>
+   </top>
+   <rotationAxis>
+      <Point3D />
+   </rotationAxis>
+</BorderPane>

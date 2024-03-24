@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="borderPane" maxWidth="350.0" minWidth="350.0" prefHeight="550.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="..\controllers\SignUpCompanyController">
+   <center>
+      <GridPane minWidth="100.0" BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="102.99998779296875" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="218.0" minWidth="10.0" prefWidth="172.80001220703127" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="75.19998779296878" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="149.0" minHeight="10.0" prefHeight="128.20000762939452" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="149.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="96.19998779296873" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="126.0" minHeight="12.0" prefHeight="63.0" />
+            <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="127.0" minHeight="0.0" prefHeight="63.0" valignment="CENTER" />
+            <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="63.0" />
+            <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="42.19999999999999" />
+            <RowConstraints maxHeight="33.60000000000002" minHeight="22.399987792968773" prefHeight="33.60000000000002" />
+         </rowConstraints>
+         <children>
+            <Button id="signupBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#signupButtonAction" stylesheets="@../styles/Login.css" text="Sign Up" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+            <Label text="Name: " textFill="#f89406" GridPane.rowIndex="1" />
+            <TextField fx:id="nameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Description: " textFill="#f89406" GridPane.rowIndex="2" />
+            <TextField fx:id="descriptionTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Email: " textFill="#f89406" GridPane.rowIndex="3" />
+            <TextField fx:id="companyEmailTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Website: " textFill="#f89406" GridPane.rowIndex="4" />
+            <TextField fx:id="websiteTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Location: " textFill="#f89406" GridPane.rowIndex="5" />
+            <TextField fx:id="locationTextField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="Phone Number: " textFill="#f89406" GridPane.rowIndex="6" />
+            <TextField fx:id="companyPhoneTextField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+               <children>
+                  <Button id="MinimizedBtn" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" maxWidth="68.0" minWidth="45.0" mnemonicParsing="false" onAction="#minimizeWindow" prefHeight="24.0" prefWidth="45.0" stylesheets="@../styles/Login.css">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button id="CloseBtn" fx:id="closeButton" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="24.0" maxWidth="68.0" minWidth="45.0" mnemonicParsing="false" onAction="#closeButtonAction" prefHeight="24.0" prefWidth="45.0" stylesheets="@../styles/Login.css">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+               <GridPane.margin>
+                  <Insets right="10.0" top="10.0" />
+               </GridPane.margin>
+            </HBox>
+            <StackPane GridPane.columnIndex="1">
+               <children>
+                  <ImageView fx:id="Defaultview" fitHeight="93" fitWidth="93" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/default.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="companyview" fitHeight="93.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <image>
+                        <Image preserveRatio="false" smooth="false" url="@../images/company.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="userview" fitHeight="93.0" fitWidth="124.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                     <image>
+                        <Image preserveRatio="false" smooth="true" url="@../images/user.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </StackPane>
+            <Label prefHeight="0.0" prefWidth="110.0" text="Signup as user" textFill="#f89406" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+         </children>
+      </GridPane>
+   </center>
+</BorderPane>
