@@ -8,13 +8,30 @@ public class JobOffer {
     private String title;
     private String description;
     private float salary;
+    private String experience;
     private String location;
     private Date postedDate;
     private Date deadline;
+    public JobOffer(String title, String description, float salary, String experience, String location) {
+        this.title = title;
+        this.description = description;
+        this.salary = salary;
+        this.experience = experience;
+        this.location = location;
+        
+    }
+    public JobOffer() {
+    }
 
     // Getters and setters
     public Long getId() {
         return id;
+    }
+    public void getExperience(String experience) {
+        this.experience = experience;
+    }
+    public String setExperience() {
+        return experience;
     }
 
     public void setId(Long id) {

@@ -13,6 +13,9 @@ public class User {
     private String bio;
     private String photo; // Add this field for the user's photo
     private List<User> friends;
+    private List<User> friendRequests;
+    private List<Experience> experiences;
+    private List<Skill> skills;
     private int friendsCount;
     private int msgCount;
     private int notCount;
@@ -38,7 +41,18 @@ public class User {
     public Long getId() {
         return id;
     }
-
+    public void setExperiences(List<Experience> experiences) {
+        this.experiences = experiences;
+    }
+    public List<Experience> getExperiences() {
+        return experiences;
+    }
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
+    }
+    public List<Skill> getSkills() {
+        return skills;
+    }
     public void setId(Long id) {
         this.id = id;
     }

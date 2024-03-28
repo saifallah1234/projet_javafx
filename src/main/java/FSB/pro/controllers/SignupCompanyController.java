@@ -13,9 +13,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.scene.control.Label;
+
 
 public class SignupCompanyController {
-     @FXML
+    @FXML
     private TextField nameTextField;
 
     @FXML
@@ -34,9 +36,6 @@ public class SignupCompanyController {
     private TextField companyPhoneTextField;
 
     @FXML
-    private Button signupBtn;
-
-    @FXML
     private ImageView Defaultview;
 
     @FXML
@@ -45,67 +44,83 @@ public class SignupCompanyController {
     @FXML
     private ImageView userview;
 
-    private CompanyDAO companyDAO;
+    @FXML
+    private Button signupBtn;
 
-    private Stage primaryStage;
+    @FXML
+    private Button MinimizedBtn;
 
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
+    @FXML
+    private Button CloseBtn;
+
+    @FXML
+    private Label errorLabel;
 
     @FXML
     private void initialize() {
-        companyDAO = new CompanyDAO();
+        errorLabel.setText("");
     }
 
     @FXML
-    private void signupButtonAction(MouseEvent event) {
+    private void closeSystem() {
+        Stage stage = (Stage) CloseBtn.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    private void minimizeWindow(MouseEvent event) {
+        Stage stage = (Stage) MinimizedBtn.getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    @FXML
+    private void signupButtonAction() {
         String name = nameTextField.getText();
         String description = descriptionTextField.getText();
         String email = companyEmailTextField.getText();
         String website = websiteTextField.getText();
         String location = locationTextField.getText();
-        String phoneNumber = companyPhoneTextField.getText();
+        String phone = companyPhoneTextField.getText();
 
-        Company newCompany = new Company();
-        newCompany.setName(name);
-        newCompany.setDescription(description);
-        newCompany.setEmail(email);
-        newCompany.setWebsite(website);
-        newCompany.setLocation(location);
-        newCompany.setPhoneNumber(phoneNumber);
+        if (validateFields(name, description, email, website, location, phone)) {
+            CompanyDAO companyDAO = new CompanyDAO();
+            Company newCompany = new Company();
+            newCompany.setName(name);
+            newCompany.setDescription(description);
+            newCompany.setEmail(email);
+            newCompany.setWebsite(website);
+            newCompany.setLocation(location);
+            newCompany.setPhoneNumber(phone);
 
-        companyDAO.addCompany(newCompany);
+            companyDAO.addCompany(newCompany);
 
-        // Switch to the company profile interface
-        switchToCompanyProfile(newCompany.getId());
+            // Switch to the company profile interface
+            switchToCompanyProfile(newCompany.getId());
+        } else {
+            errorLabel.setText("Please fill in all fields.");
+        }
     }
 
     private void switchToCompanyProfile(long companyId) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/views/CompanyProfile.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/path/to/CompanyProfile.fxml"));
             Parent root = loader.load();
 
             CompanyProfileController companyProfileController = loader.getController();
             companyProfileController.setCompanyId(companyId);
 
             Scene scene = new Scene(root);
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            Stage stage = (Stage) signupBtn.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+    }
+    private boolean validateFields(String name, String description, String email, String website, String location, String phone) {
+        return !name.isEmpty() && !description.isEmpty() && !email.isEmpty() && !website.isEmpty() && !location.isEmpty() && !phone.isEmpty();
     }
 
-    @FXML
-    private void minimizeWindow(MouseEvent event) {
-        System.out.println("Minimize button clicked");
-    }
 
-    @FXML
-    private void closeSystem(MouseEvent event) {
-        System.out.println("Close button clicked");
-    }
-
-}
 }

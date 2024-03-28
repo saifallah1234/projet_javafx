@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public class Post {
     private Long id;
+    String title;
     private String text;
     private LocalDate sendDate;
     private LocalDateTime sendTime;
@@ -24,6 +25,12 @@ public class Post {
 
     public Long getId() {
         return id;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setId(Long id) {

@@ -21,13 +21,13 @@ public class CommentDAO {
     // Method to add a new comment to the database
     public void addComment(Comment comment) {
         try {
-            String query = "INSERT INTO comment (text, sendDate,send_time, sender_id, post_id) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO comment (text, sendDate, send_time, sender_id, post_id) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, comment.getText());
             preparedStatement.setDate(2, java.sql.Date.valueOf(comment.getSendDate()));
-            preparedStatement.setTimestamp(0, java.sql.Timestamp.valueOf(comment.getSendTime()));
-            preparedStatement.setLong(3, comment.getSenderId());
-            preparedStatement.setLong(4, comment.getPostId());
+            preparedStatement.setTimestamp(3, java.sql.Timestamp.valueOf(comment.getSendTime()));
+            preparedStatement.setLong(4, comment.getSenderId());
+            preparedStatement.setLong(5, comment.getPostId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -86,7 +86,4 @@ public class CommentDAO {
         }
         return commentList;
     }
-
-    // Other methods...
 }
-

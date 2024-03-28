@@ -286,5 +286,40 @@ public class UserDAO {
         }
         return user;
     }
+    // Method to get all skills of a user
+public List<String> getAllSkills(Long userId) {
+    List<String> skills = new ArrayList<>();
+    try {
+        String query = "SELECT skill_name FROM user_skills WHERE user_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setLong(1, userId);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            skills.add(resultSet.getString("skill_name"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return skills;
+}
+// Method to get all experiences of a user
+public List<String> getAllExperiences(Long userId) {
+    List<String> experiences = new ArrayList<>();
+    try {
+        String query = "SELECT experience_name FROM user_experiences WHERE user_id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setLong(1, userId);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            experiences.add(resultSet.getString("experience_name"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return experiences;
+}
+
     
 }

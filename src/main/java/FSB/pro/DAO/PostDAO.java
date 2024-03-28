@@ -33,6 +33,20 @@ public class PostDAO {
             e.printStackTrace();
         }
     }
+    public void incrementReaction(long postId) {
+        try {
+            String query = "UPDATE post SET reactions = reactions + 1 WHERE id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, postId);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Reaction incremented successfully.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Method to update an existing post in the database
     public void updatePost(Post post) {
@@ -123,7 +137,32 @@ public class PostDAO {
         }
         return post;
     }
+    public List<Post> getPostBySenderId(Long Sender_id){
+        List<Post> postList = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM post WHERE sender_id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, Sender_id);
 
-    // Other methods...
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Post post = new Post();
+                post.setId(resultSet.getLong("id"));
+                post.setTitle(resultSet.getString("title"));
+                post.setText(resultSet.getString("text"));
+                post.setSendDate(resultSet.getDate("sendDate").toLocalDate());
+                post.setSendTime(resultSet.getTimestamp("sendTime").toLocalDateTime());
+                post.setSenderId(resultSet.getLong("sender_id"));
+                post.setReactions(resultSet.getInt("reactions"));
+                post.setComCount(resultSet.getInt("comCount"));
+
+                postList.add(post);
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+    }
+    return postList;
+    }
 }
 

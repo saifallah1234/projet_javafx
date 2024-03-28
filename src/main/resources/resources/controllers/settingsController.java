@@ -61,5 +61,5 @@ public class ChatController {
 
     @FXML
     private void feedback() {
-    util.switchtoFeedback();
+    util.switchtoFeedback();}
 }

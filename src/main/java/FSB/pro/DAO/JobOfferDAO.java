@@ -17,6 +17,9 @@ public class JobOfferDAO {
         // Initialize the connection
         connection = ConxDB.getInstance();
     }
+    
+    //add an empty constructeur
+    
 
     // Method to add a new job offer to the database
     public void addJobOffer(JobOffer jobOffer) {
