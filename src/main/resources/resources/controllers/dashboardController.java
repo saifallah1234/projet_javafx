@@ -2,8 +2,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.ListView;
 
-public class DashboardController {
+public class dashboardController {
     @FXML
     private ImageView userImageView;
 
@@ -12,78 +13,39 @@ public class DashboardController {
 
     @FXML
     private Label usernameLabel;
+
     @FXML
     private Label userOnlineCountLabel;
+
     @FXML
-    private List userOnlineList;
+    private ListView<String> userOnlineList;
+
     @FXML
     private Button showProfile;
+
     @FXML
     private Button openChat;
+
     @FXML
     private Button handleNotificationButton;
+
     @FXML
     private Button handleSettingsButton;
+
     @FXML
     private Button handleLogout;
 
     @FXML
-    private Label firstName;
+    private ListView<Post> feedListView;
 
     @FXML
-    private Label title1;
-
-    @FXML
-    private Label author1;
-
-    @FXML
-    private Label date1;
-
-    @FXML
-    private Label postText1;
-
-    @FXML
-    private Button addLike1;
-
-    @FXML
-    private Button addComment1;
-
-    @FXML
-    private Button editPost1;
-
-    @FXML
-    private Button deletePost1;
-
-    @FXML
-    private Button showCom1;
-
-    @FXML
-    private Label likeCount1;
-
-    @FXML
-    private Label comCount1;
-
-    @FXML
-    private Label errorOperation;
-
-    @FXML
-    private Label friendsCount;
-
-    @FXML
-    private Label messagesCount;
-
-    @FXML
-    private Label notCount;
-
-    @FXML
-    private Button addPost;
-    @FXML
-    private void initialize{
-              userImageView.setImage(Util.fetchProfileImage());
+    private void initialize() {
+        userImageView.setImage(Util.fetchProfileImage());
         usernameLabel.setText(Util.fetchUsername());
         userOnlineList.setItems(Util.fetchOnlineList());
-        userOnlineCountLabel.setText("Online: " + Util.fetchOnlineCount());}
-
+        userOnlineCountLabel.setText("Online: " + Util.fetchOnlineCount());
+        feedListView.setItems(Util.fetchFeed());
+    }
 
     @FXML
     private void showProfile() {
@@ -111,38 +73,31 @@ public class DashboardController {
     }
 
     @FXML
-    private void closeApplication(MouseEvent event) {
-        Util.closeApplication();}
-
-    @FXML
-    private void addLike1() {
-        Util.addLike1();
+    private void addLike() {
+        Post selectedPost = feedListView.getSelectionModel().getSelectedItem();
+        if (selectedPost != null) {
+            Util.addLike(selectedPost);
+        }
     }
 
     @FXML
-    private void addComment1() {
-        Util.addComment1();
+    private void addComment() {
+        Post selectedPost = feedListView.getSelectionModel().getSelectedItem();
+        if (selectedPost != null) {
+            Util.addComment(selectedPost);
+        }
     }
 
     @FXML
-    private void editPost1() {
-        Util.editPost1();
-    }
-
-    @FXML
-    private void deletePost1() {
-        Util.deletePost1();
-    }
-
-    @FXML
-    private void showCom1() {
-        Util.showCom1();
+    private void handleRepostButtonAction() {
+        Post selectedPost = feedListView.getSelectionModel().getSelectedItem();
+        if (selectedPost != null) {
+            Util.repost(selectedPost);
+        }
     }
 
     @FXML
     private void addPost() {
         Util.addPost();
     }
-
-
 }
