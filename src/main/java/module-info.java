@@ -4,6 +4,6 @@ module FSB.pro {
 	requires java.sql;
 
     opens FSB.pro.controllers to javafx.fxml;
-    exports FSB.pro;
     exports FSB.pro.Main;
+    exports FSB.pro.controllers;
 }

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import FSB.pro.DAO.FriendshipDAO;
 import FSB.pro.DAO.UserDAO;
 import FSB.pro.models.User;
+import FSB.pro.utils.SceneSwitcher;
+import FSB.pro.utils.UserFetchImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 
 public class FriendListController {
@@ -65,7 +68,7 @@ public class FriendListController {
     @FXML
     private void initialize() {
         User user = userDAO.getUserById(userId);
-        userImageView.setImage(fetchProfileImage());
+        userImageView.setImage(UserFetchImage.fetchProfileImage(userDAO.getUserById(userId).getPhoto()));
         usernameLabel.setText(fetchUsername());
         ObservableList<String> onlineUsernames = fetchOnlineList();
         userOnlineList.setItems(onlineUsernames);
@@ -74,25 +77,7 @@ public class FriendListController {
         user.setId(userId);
     }
 
-    private Image fetchProfileImage() {
-         user = userDAO.getUserById(userId);
-    
-        if (user != null) {
-            String imagePath = user.getPhoto(); // Assuming this is the file path stored in the database
-            File imageFile = new File(imagePath);
-    
-            if (imageFile.exists()) {
-                return new Image(imageFile.toURI().toString());
-            } else {
-                // Default image if the file doesn't exist
-                return new Image("/path/to/default/image.png");
-            }
-        }
-    
-        // Return null or default image if user not found or image path is null
-        return new Image("/path/to/default/image.png");
-    }
-    
+
 
     private String fetchUsername() {
          // Implement logic to fetch username
@@ -129,12 +114,16 @@ public class FriendListController {
 
     @FXML
     private void showProfile() {
-        // Implement logic to show user profile
+        Stage currentStage = (Stage) showProfile.getScene().getWindow();
+        UserMainProfileController profileController = SceneSwitcher.switchScene("UserMainProfileController.fxml", currentStage);
+        profileController.userId(userId);
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(userId);
     }
 
     @FXML
@@ -149,11 +138,20 @@ public class FriendListController {
 
     @FXML
     private void handleLogoutButton() {
-        // Implement logic to handle logout
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication(MouseEvent event) {
-        // Implement logic to close the application
+        Object source = event.getSource();
+        if (source instanceof Button) {
+            Button clickedButton = (Button) source;
+            Stage stage = (Stage) clickedButton.getScene().getWindow();
+            stage.close();
+        }
+    
     }
 }

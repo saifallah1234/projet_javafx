@@ -2,9 +2,13 @@ package FSB.pro.controllers;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import FSB.pro.DAO.UserDAO;
 import FSB.pro.models.User;
+import FSB.pro.utils.SceneSwitcher;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -16,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.MediaView;
 
 public class EditUserProfileController {
     @FXML
@@ -52,7 +57,8 @@ public class EditUserProfileController {
     private ImageView userpicture;
 
     @FXML
-    private MediaView videoView;
+    private Button editImageButton;
+    
 
     @FXML
     private TextField NameField;
@@ -71,9 +77,13 @@ public class EditUserProfileController {
     public UserDAO userDAO = new UserDAO();
     public User userProfile;
     private long id;
+    public void userid(long id){
+        this.id=id;
+    }
 
     @FXML
     private void initialize() {
+        userProfile = userDAO.getUserById(id);
         userImageView.setImage(fetchProfileImage());
         usernameLabel.setText(fetchUsername());
         userOnlineList.setItems(fetchOnlineList());
@@ -104,24 +114,37 @@ public class EditUserProfileController {
         return userDAO.getUserById(id).getUsername();
     }
 
-    private ListView<String> fetchOnlineList() {
-        // Implement logic to fetch online users list
-        return null; // Return the fetched online users list
-    }
+    private ObservableList<String> fetchOnlineList() {
+    List<String> onlineUsers = userDAO.getAllUsers().stream()
+        .filter(User::isLogged)
+        .map(User::getUsername)
+        .collect(Collectors.toList());
+
+    // Convert the List<String> to ObservableList<String>
+    ObservableList<String> onlineUsersObservableList = FXCollections.observableArrayList(onlineUsers);
+
+    return onlineUsersObservableList;
+}
+
+
 
     private int fetchOnlineCount() {
         // Implement logic to fetch online count
-        return 0; // Return the fetched online count
+        return userDAO.getAllUsers().stream().filter(x ->x.isLogged()).collect(Collectors.toList()).size(); // Return the fetched online count
     }
 
     @FXML
     private void showProfile() {
-        // Implement logic to show user profile
+        Stage currentStage = (Stage) showProfile.getScene().getWindow();
+        UserMainProfileController profileController = SceneSwitcher.switchScene("UserMainProfileController.fxml", currentStage);
+        profileController.userId(id);
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(id);
     }
 
     @FXML
@@ -136,13 +159,22 @@ public class EditUserProfileController {
 
     @FXML
     private void handleLogout() {
-        // Implement logic to handle logout
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication(MouseEvent event) {
-        // Implement logic to close the application
+        Object source = event.getSource();
+        if (source instanceof Button) {
+            Button clickedButton = (Button) source;
+            Stage stage = (Stage) clickedButton.getScene().getWindow();
+            stage.close();
+        }
     }
+    
 
     @FXML
 private String browseForImage() {
@@ -178,7 +210,7 @@ private String browseForImage() {
 
     @FXML
     private void editSkills() {
-        userDAO.g
+        
     }
 
     @FXML

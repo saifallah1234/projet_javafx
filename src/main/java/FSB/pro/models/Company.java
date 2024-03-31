@@ -11,16 +11,39 @@ public class Company {
     private String website;
     private String location;
     private String phoneNumber;
+    private String password;
     private List<String> services; // List of services offered by the company
     private List<String> teamMembers; // List of team members
     private List<String> projects; // List of projects
     private int likes; // Number of likes
     // Additional fields related to company profile
+    public Company(String name, String description, String email, String website, String location, String phoneNumber,String password) {
+        this.name = name;
+        this.description = description;
+        this.email = email;
+        this.website = website;
+        this.location = location;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.services = services;
+        this.teamMembers = teamMembers;
+        this.projects = projects;
+        this.likes = likes;
+        this.logo = logo;
+    }
+    public Company() {
+    }
 
     // Getters and setters for the new fields
 
     public List<String> getServices() {
         return services;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setServices(List<String> services) {

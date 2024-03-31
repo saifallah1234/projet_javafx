@@ -15,11 +15,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-
+import javafx.stage.Stage;
+import FSB.pro.DAO.CompanyDAO;
 import FSB.pro.DAO.JobOfferDAO;
 import FSB.pro.DAO.UserDAO;
 import FSB.pro.models.JobOffer;
 import FSB.pro.models.User;
+import FSB.pro.utils.SceneSwitcher;
+import FSB.pro.utils.UserFetchImage;
 
 public class JobPostController {
 
@@ -72,6 +75,7 @@ public class JobPostController {
     private TextArea descriptionArea;
 
     private JobOfferDAO jobOfferDAO;
+    public CompanyDAO companyDAO = new CompanyDAO();
     UserDAO userDAO = new UserDAO();
     public long companyId;
     public void companyId(long id){
@@ -81,33 +85,13 @@ public class JobPostController {
 
     @FXML
     private void initialize() {
-        userImageView.setImage(fetchProfileImage());
+        userImageView.setImage(UserFetchImage.fetchProfileImage(companyDAO.getCompanyById(companyId).getLogo()));
         usernameLabel.setText(fetchUsername());
         userOnlineList.setItems(fetchFriendList());
         userOnlineCountLabel.setText("Online: " + fetchOnlineCount());
 
         jobOfferDAO = new JobOfferDAO();
         JobOffer jobOffer = new JobOffer();
-    }
-
-    private Image fetchProfileImage() {
-
-        User user = userDAO.getUserById(companyId);
-    
-        if (user != null) {
-            String imagePath = user.getPhoto(); // Assuming this is the file path stored in the database
-            File imageFile = new File(imagePath);
-    
-            if (imageFile.exists()) {
-                return new Image(imageFile.toURI().toString());
-            } else {
-                // Default image if the file doesn't exist
-                return new Image("/path/to/default/image.png");
-            }
-        }
-    
-        // Return null or default image if user not found or image path is null
-        return new Image("/path/to/default/image.png");
     }
     }
 
@@ -131,12 +115,16 @@ public class JobPostController {
 
     @FXML
     private void showProfile() {
-        // Implement logic to show user profile
+       Stage currentStage = (Stage) showProfile.getScene().getWindow();
+            UserCompanyProfile profileController = SceneSwitcher.switchScene("UserCompanyProfile.fxml", currentStage);
+            profileController.userId(companyId);
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(companyId);
     }
 
     @FXML
@@ -156,12 +144,20 @@ public class JobPostController {
 
     @FXML
     private void handleLogoutButton() {
-        // Implement logic to handle logout
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication(MouseEvent event) {
-        // Implement logic to close the application
+        Object source = event.getSource();
+        if (source instanceof Button) {
+            Button clickedButton = (Button) source;
+            Stage stage = (Stage) clickedButton.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML

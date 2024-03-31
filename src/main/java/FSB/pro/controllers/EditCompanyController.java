@@ -2,11 +2,13 @@ package FSB.pro.controllers;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import FSB.pro.DAO.CompanyDAO;
 import FSB.pro.DAO.UserDAO;
 import FSB.pro.models.Company;
 import FSB.pro.models.User;
+import FSB.pro.utils.SceneSwitcher;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -67,11 +69,13 @@ public class EditCompanyController {
     @FXML
     private ListView<String> companyProjectsListView;
     public CompanyDAO companyDAO = new CompanyDAO();
+    public UserDAO userDAO = new UserDAO();
     private long companyId;
     public Company companyProfile = companyDAO.getCompanyById(companyId);
     public void companyId(long companyId) {
         this.companyId = companyId;
     }
+    
 
 
 
@@ -107,17 +111,21 @@ public class EditCompanyController {
     }
     private int fetchOnlineCount() {
         // Implement logic to fetch online count
-        return 0; // Return the fetched online count
+        return userDAO.getAllUsers().stream().filter(x->x.isLogged()).collect(Collectors.toList()).size(); // Return the fetched online count
     }
 
     @FXML
     private void showProfile() {
-        // Implement logic to show user profile
+       Stage currentStage = (Stage) showProfile.getScene().getWindow();
+            UserCompanyProfile profileController = SceneSwitcher.switchScene("UserCompanyProfile.fxml", currentStage);
+            profileController.userId(companyId);
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(companyId);
     }
 
     @FXML
@@ -191,6 +199,8 @@ private String browseForImage() {
 
     @FXML
     private void returnToMainProfile() {
-        // Implement logic to switch to company profile view
+        Stage currentStage = (Stage) showProfile.getScene().getWindow();
+        UserCompanyProfile profileController = SceneSwitcher.switchScene("UserCompanyProfile.fxml", currentStage);
+        profileController.userId(companyId);
     }
 }

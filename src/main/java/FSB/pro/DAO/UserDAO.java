@@ -1,11 +1,15 @@
 package FSB.pro.DAO;
+
 import FSB.pro.models.User;
 import FSB.pro.utils.ConxDB;
+import FSB.pro.utils.EntityDao;
+import javafx.scene.image.Image;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO {
+public class UserDAO implements EntityDao {
     private Connection connection;
 
     public UserDAO() {
@@ -16,8 +20,8 @@ public class UserDAO {
     // Method to add a new user to the database
     public void addUser(User user) {
         try {
-            String query = "INSERT INTO user (username, email, firstName, lastName, password, number,bio, matchingPassword, role, photo) " +
-                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO user (username, email, firstName, lastName, password, number, bio, matchingPassword, role, photo) " +
+                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getEmail());
@@ -29,18 +33,17 @@ public class UserDAO {
             preparedStatement.setString(8, user.getMatchingPassword());
             preparedStatement.setString(9, user.getRole());
             preparedStatement.setString(10, user.getPhoto());
-    
+
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
 
     // Method to update an existing user in the database
     public void updateUser(User user) {
         try {
-            String query = "UPDATE user SET username=?, email=?, firstName=?, lastName=?, password=?, number=?,bio=?, msgCount=?, notCount=?, matchingPassword=?, role=?, logged=?, friendsCount=?, photo=? " +
+            String query = "UPDATE user SET username=?, email=?, firstName=?, lastName=?, password=?, number=?, bio=?, msgCount=?, notCount=?, matchingPassword=?, role=?, logged=?, friendsCount=?, photo=? " +
                     "WHERE id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, user.getUsername());
@@ -154,36 +157,6 @@ public class UserDAO {
         }
         return userList;
     }
-    public User findByEmail(String email) {
-        User user = new User() ;
-        try {
-            String query = "SELECT * FROM user WHERE email=?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, email);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                user.setId(resultSet.getLong("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setEmail(resultSet.getString("email"));
-                user.setFirstName(resultSet.getString("firstName"));
-                user.setLastName(resultSet.getString("lastName"));
-                user.setPassword(resultSet.getString("password"));
-                user.setBio(resultSet.getString("bio"));
-                user.setFriendsCount(resultSet.getInt("friendsCount"));
-                user.setMsgCount(resultSet.getInt("msgCount"));
-                user.setNotCount(resultSet.getInt("notCount"));
-                user.setMatchingPassword(resultSet.getString("matchingPassword"));
-                user.setRole(resultSet.getString("role"));
-                user.setLogged(resultSet.getBoolean("logged"));
-                user.setPhoneNumber(resultSet.getString("number"));
-                user.setPhoto(resultSet.getString("photo"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
 
     // Method to find users who are logged in
     public List<User> findByLogged() {
@@ -286,40 +259,146 @@ public class UserDAO {
         }
         return user;
     }
+
     // Method to get all skills of a user
-public List<String> getAllSkills(Long userId) {
-    List<String> skills = new ArrayList<>();
-    try {
-        String query = "SELECT skill_name FROM user_skills WHERE user_id=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setLong(1, userId);
+    public List<String> getAllSkills(Long userId) {
+        List<String> skills = new ArrayList<>();
+        try {
+            String query = "SELECT skill_name FROM user_skills WHERE user_id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, userId);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            skills.add(resultSet.getString("skill_name"));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                skills.add(resultSet.getString("skill_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return skills;
     }
-    return skills;
-}
-// Method to get all experiences of a user
-public List<String> getAllExperiences(Long userId) {
-    List<String> experiences = new ArrayList<>();
-    try {
-        String query = "SELECT experience_name FROM user_experiences WHERE user_id=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setLong(1, userId);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            experiences.add(resultSet.getString("experience_name"));
+    // Method to get all experiences of a user
+    public List<String> getAllExperiences(Long userId) {
+        List<String> experiences = new ArrayList<>();
+        try {
+            String query = "SELECT experience_name FROM user_experiences WHERE user_id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, userId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                experiences.add(resultSet.getString("experience_name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return experiences;
     }
-    return experiences;
-}
 
-    
+    @Override
+    public String fetchUsername(long id) {
+        // TODO Auto-generated method stub
+        UserDAO userDAO = new UserDAO();
+        return userDAO.getUserById(id).getUsername();
+
+    }
+
+    @Override
+    public Image fetchProfileImage(long id) {
+        // TODO Auto-generated method stub
+        UserDAO userDAO = new UserDAO();
+        String photoPath = userDAO.getUserById(id).getPhoto(); // Assuming this is the file path stored in the database
+        // Load the image from the specified path
+        try {
+            Image profileImage = new Image("file:" + photoPath);
+
+            return profileImage;
+        } catch (Exception e) {
+            System.err.println("Error loading profile image: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean findByIdtest(Long id) {
+        User user = null;
+        try {
+            String query = "SELECT * FROM user WHERE id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setLong(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setEmail(resultSet.getString("email"));
+                user.setFirstName(resultSet.getString("firstName"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setPassword(resultSet.getString("password"));
+                user.setBio(resultSet.getString("bio"));
+                user.setFriendsCount(resultSet.getInt("friendsCount"));
+                user.setMsgCount(resultSet.getInt("msgCount"));
+                user.setNotCount(resultSet.getInt("notCount"));
+                user.setMatchingPassword(resultSet.getString("matchingPassword"));
+                user.setRole(resultSet.getString("role"));
+                user.setLogged(resultSet.getBoolean("logged"));
+                user.setPhoneNumber(resultSet.getString("number"));
+                user.setPhoto(resultSet.getString("photo"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (user != null) {
+            return true;
+        }
+        return false;
+    }
+    public Long getUserIdByUsername(String username) {
+        Long userId = null;
+        try {
+            String query = "SELECT id FROM user WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                userId = resultSet.getLong("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+    public Long getUserIdByUsernameAndPassword(String username, String password) {
+        Long userId = 0l;
+        try {
+            String query = "SELECT id FROM user WHERE username=? AND password=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                userId = resultSet.getLong("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+    public boolean usernameExists(String username) {
+        try {
+            String query = "SELECT * FROM user WHERE username=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next(); // If resultSet has next, username exists
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

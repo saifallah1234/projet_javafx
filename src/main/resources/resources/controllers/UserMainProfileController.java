@@ -8,6 +8,8 @@ public class ProfileController {
 
     @FXML
     private ImageView profileImage;
+    @FXML
+    private Button editProfileButton;
 
     @FXML
     private Label nameLabel;

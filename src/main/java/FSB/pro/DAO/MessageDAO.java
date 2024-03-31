@@ -37,12 +37,12 @@ public class MessageDAO {
     }
 
     // Method to get messages sent by a user
-    public List<Messages> getMessagesSentByUser(User user) {
+    public List<Messages> getMessagesSentByUser(long user) {
         List<Messages> messages = new ArrayList<>();
         try {
             String query = "SELECT * FROM message WHERE sender_id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setLong(1, user.getId());
+            preparedStatement.setLong(1, user);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -67,12 +67,12 @@ public class MessageDAO {
     }
 
     // Method to get messages received by a user
-    public List<Messages> getMessagesReceivedByUser(User user) {
+    public List<Messages> getMessagesReceivedByUser(long user) {
         List<Messages> messages = new ArrayList<>();
         try {
             String query = "SELECT * FROM message WHERE addressee_id=?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setLong(1, user.getId());
+            preparedStatement.setLong(1,user);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {

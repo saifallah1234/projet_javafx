@@ -16,7 +16,8 @@ import FSB.pro.DAO.UserDAO;
 import FSB.pro.models.Company;
 import FSB.pro.models.Post;
 import FSB.pro.models.User;
-import FSB.pro.services.SceneSwitcher;
+import FSB.pro.utils.SceneSwitcher;
+import FSB.pro.utils.UserFetchImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -52,6 +53,15 @@ public class CompanyProfileController {
     private ListView userOnlineList;
     @FXML
     private Label userOnlineCountLabel;
+
+    @FXML
+    private Button showProfile;
+    @FXML
+    private Button openChat;
+    @FXML
+    private Button handleLogout;
+    @FXML
+    private Button closeButton;
 @FXML
 private Label comment;
 @FXML
@@ -63,14 +73,14 @@ private Label share;
     public Company companyProfile;
     private long companyId;
 
-    public void companyID(long id){
+    public void setCompanyId(long id){
         this.companyId = id;
     }
 
     public void initialize() {
         UserDAO userDAO = new UserDAO();
         companyProfile = companyDAO.getCompanyById(companyId); // Change 1 to the actual company ID
-        userImageView.setImage(fetchProfileImage());
+        userImageView.setImage(UserFetchImage.fetchProfileImage(companyDAO.getCompanyById(companyId).getLogo()));
         usernameLabel.setText(fetchUsername());
         userOnlineList.setItems(fetchOnlineList());
         userOnlineCountLabel.setText("Online: " + fetchOnlineCount());
@@ -87,24 +97,6 @@ private Label share;
         companyNewsListView.getItems().addAll(companyNews);
     }
 
-    private Image fetchProfileImage() {
-      
-    
-        if (companyProfile != null) {
-            String imagePath = companyProfile.getLogo(); // Assuming this is the file path stored in the database
-            File imageFile = new File(imagePath);
-    
-            if (imageFile.exists()) {
-                return new Image(imageFile.toURI().toString());
-            } else {
-                // Default image if the file doesn't exist
-                return new Image("/path/to/default/image.png");
-            }
-        }
-    
-        // Return null or default image if user not found or image path is null
-        return new Image("/path/to/default/image.png");
-    }
 
     private String fetchUsername() {
         // Implement logic to fetch username
@@ -128,12 +120,17 @@ private Label share;
 
     @FXML
     private void showProfile() {
-        // Implement logic to show user profile
+        Stage currentStage = (Stage) showProfile.getScene().getWindow();
+            UserCompanyProfile profileController = SceneSwitcher.switchScene("UserCompanyProfile.fxml", currentStage);
+            profileController.userId(companyId);
+        }
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(companyId);
     }
 
     @FXML
@@ -148,12 +145,16 @@ private Label share;
 
     @FXML
     private void handleLogoutButton() {
-        // Implement logic to handle logout
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication() {
-        // Implement logic to close the application
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+            stage.close();
     }
 
     @FXML

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import FSB.pro.DAO.CommentDAO;
+import FSB.pro.DAO.CompanyDAO;
 import FSB.pro.DAO.PostDAO;
 import FSB.pro.DAO.UserDAO;
 import javafx.fxml.FXML;
@@ -14,8 +15,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import FSB.pro.models.Comment;
 import FSB.pro.models.User;
+import FSB.pro.utils.DaoTester;
+import FSB.pro.utils.EntityDao;
+import FSB.pro.utils.SceneSwitcher;
+import FSB.pro.utils.UserFetchImage;
 import FSB.pro.models.Post;
 import javafx.scene.image.Image;
 
@@ -64,15 +70,19 @@ public class CommentController {
 
     private Long postId;
     private Long userId;
+    public long userId(Long userId) {
+        return userId;
+    }
     public long postId(Long postId) {
         return postId;
     }
-
+    EntityDao entityDao = DaoTester.tetst(userId);
+    UserDAO userDAO = new UserDAO();
     public void initialize() {
         commentDAO = new CommentDAO();
 
-        userImageView.setImage(fetchProfileImage());
-        usernameLabel.setText(fetchUsername());
+        userImageView.setImage(entityDao.fetchProfileImage(userId));
+        usernameLabel.setText(entityDao.fetchUsername(userId));
         userOnlineCountLabel.setText("Online: " + fetchOnlineCount());
         title.setText(fetchPostTitle());
         postText.setText(fetchPostText());
@@ -80,12 +90,23 @@ public class CommentController {
 
     @FXML
     private void showProfile() {
-        // Implement logic to show user profile
+        if (entityDao instanceof UserDAO) {
+            Stage currentStage = (Stage) showProfile.getScene().getWindow();
+        UserMainProfileController profileController = SceneSwitcher.switchScene("UserMainProfileController.fxml", currentStage);
+        profileController.userId(userId);
+        }
+        else{
+            Stage currentStage = (Stage) showProfile.getScene().getWindow();
+            UserCompanyProfile profileController = SceneSwitcher.switchScene("UserCompanyProfile.fxml", currentStage);
+            profileController.userId(userId);
+        }
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(userId);
     }
 
     @FXML
@@ -100,12 +121,19 @@ public class CommentController {
 
     @FXML
     private void handleLogout() {
-        // Implement logic to handle logout
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication() {
-        // Implement logic to close application
+        
+            
+            Stage stage = (Stage) closeButton.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML
@@ -138,26 +166,6 @@ public class CommentController {
     private void refreshComments() {
         List<Comment> comments = commentDAO.getCommentsByPostId(postId); // Get comments for the post
 
-    }
-
-    private Image fetchProfileImage() {
-        UserDAO userDAO = new UserDAO();
-        User user = userDAO.getUserById(userId);
-    
-        if (user != null) {
-            String imagePath = user.getPhoto(); // Assuming this is the file path stored in the database
-            File imageFile = new File(imagePath);
-    
-            if (imageFile.exists()) {
-                return new Image(imageFile.toURI().toString());
-            } else {
-                // Default image if the file doesn't exist
-                return new Image("/path/to/default/image.png");
-            }
-        }
-    
-        // Return null or default image if user not found or image path is null
-        return new Image("/path/to/default/image.png");
     }
     
 

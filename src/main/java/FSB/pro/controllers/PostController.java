@@ -11,8 +11,12 @@ import FSB.pro.DAO.PostDAO;
 import FSB.pro.DAO.UserDAO;
 import FSB.pro.models.Post;
 import FSB.pro.models.User;
-
+import FSB.pro.utils.DaoTester;
+import FSB.pro.utils.EntityDao;
+import FSB.pro.utils.SceneSwitcher;
+import FSB.pro.utils.UserFetchImage;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -20,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
 
@@ -38,6 +43,17 @@ public class PostController {
 
     @FXML
     private Label userOnlineCountLabel;
+    @FXML
+    private Button showProfile;
+    @FXML
+    private Button openChat;
+    @FXML
+    private Button handleNotificationButton;
+    @FXML
+    private Button handleSettingsButton;
+    @FXML
+    private Button handleLogout;
+
 
 
     public UserDAO userDAO = new UserDAO();
@@ -48,12 +64,13 @@ public class PostController {
         this.userId=userId;
     }
 public PostDAO postDAO = new PostDAO();
+EntityDao entityDao = DaoTester.tetst(userId);
 
     @FXML
     private void initialize() {
         // Initialize user information
-        userImageView.setImage(fetchProfileImage());
-        usernameLabel.setText(fetchUsername());
+        userImageView.setImage(entityDao.fetchProfileImage(userId));
+        usernameLabel.setText(entityDao.fetchUsername(userId));
         userOnlineList.getItems().addAll(fetchOnlineList());
         userOnlineCountLabel.setText("Online: " + fetchOnlineCount());
     }
@@ -105,13 +122,24 @@ public PostDAO postDAO = new PostDAO();
     }
 
     @FXML
-    private void showProfile() {
-        // Implement logic to show user profile
+    private void showProfile(){
+       if (entityDao instanceof UserDAO) {
+            Stage currentStage = (Stage) showProfile.getScene().getWindow();
+        UserMainProfileController profileController = SceneSwitcher.switchScene("UserMainProfileController.fxml", currentStage);
+        profileController.userId(userId);
+        }
+        else{
+            Stage currentStage = (Stage) showProfile.getScene().getWindow();
+            UserCompanyProfile profileController = SceneSwitcher.switchScene("UserCompanyProfile.fxml", currentStage);
+            profileController.userId(userId);
+        }
     }
 
     @FXML
     private void openChat() {
-        // Implement logic to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(userId);
     }
 
     @FXML
@@ -126,12 +154,20 @@ public PostDAO postDAO = new PostDAO();
 
     @FXML
     private void handleLogoutButton() {
-        // Implement logic to handle logout
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication(MouseEvent event) {
-        // Implement logic to close the application
+       Object source = event.getSource();
+        if (source instanceof Button) {
+            Button clickedButton = (Button) source;
+            Stage stage = (Stage) clickedButton.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML

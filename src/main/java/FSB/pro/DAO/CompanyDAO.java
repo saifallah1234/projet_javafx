@@ -9,17 +9,19 @@ import java.util.List;
 
 import FSB.pro.models.Company;
 import FSB.pro.utils.ConxDB;
+import FSB.pro.utils.EntityDao;
+import javafx.scene.image.Image;
 
-public class CompanyDAO {
+public class CompanyDAO implements EntityDao{
     private Connection connection;
 
     public CompanyDAO() {
         // Initialize the connection
         connection = ConxDB.getInstance();
     }
-    public void addCompany(Company company) {
+    public void addCompany(Company company) throws SQLException {
         try {
-            String query = "INSERT INTO company (name, description, email, website, location, phone_number, logo, likes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO company (name, description, email, website, location, phone_number,password, logo, likes) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, company.getName());
             preparedStatement.setString(2, company.getDescription());
@@ -27,14 +29,22 @@ public class CompanyDAO {
             preparedStatement.setString(4, company.getWebsite());
             preparedStatement.setString(5, company.getLocation());
             preparedStatement.setString(6, company.getPhoneNumber());
-            preparedStatement.setString(7, company.getLogo());
-            preparedStatement.setInt(8, company.getLikes());
-
-            preparedStatement.executeUpdate();
+            preparedStatement.setString(7, company.getPassword());
+            preparedStatement.setString(8, company.getLogo());
+            preparedStatement.setInt(9, company.getLikes());
+    
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Company inserted successfully.");
+            } else {
+                System.out.println("Failed to insert company.");
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error inserting company: " + e.getMessage());
+            throw e; // Rethrow the exception to indicate failure
         }
     }
+    
 
     // Method to get a company by ID from the database
     public Company getCompanyById(Long companyId) {
@@ -184,7 +194,192 @@ public class CompanyDAO {
             e.printStackTrace();
         }
     }
+    @Override
+    public String fetchUsername(long id) {
+        // TODO Auto-generated method stub
+        CompanyDAO companyDAO = new CompanyDAO();
+        return companyDAO.getCompanyById(id).getName();
+    }
+    @Override
+    public Image fetchProfileImage(long id) {
+        // TODO Auto-generated method stub
+       CompanyDAO companyDAO = new CompanyDAO();
+    String photoPath = companyDAO.getCompanyById(id).getLogo(); // Assuming this is the file path stored in the database
+     // Load the image from the specified path
+     try{
+     Image profileImage = new Image("file:" + photoPath);
 
-    // Other methods for deleting company services, team members, projects, etc. as needed...
+     return profileImage;
+    } catch (Exception e) {
+     System.err.println("Error loading profile image: " + e.getMessage());
+     return null;
+    }
+}
+public boolean getCompanyByIdTest(Long companyId) {
+    Company company = null;
+    try {
+        String query = "SELECT * FROM company WHERE id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setLong(1, companyId);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            company = new Company();
+            company.setId(resultSet.getLong("id"));
+            company.setName(resultSet.getString("name"));
+            company.setDescription(resultSet.getString("description"));
+            company.setEmail(resultSet.getString("email"));
+            company.setWebsite(resultSet.getString("website"));
+            company.setLocation(resultSet.getString("location"));
+            company.setPhoneNumber(resultSet.getString("phone_number"));
+            company.setLogo(resultSet.getString("logo"));
+            company.setLikes(resultSet.getInt("likes"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    if (company != null) {
+        return true;
+    } else {
+        return false;
+        
+    }
+}
+
+public Company getCompanyByName(String name) {
+    Company company = null;
+    try {
+        String query = "SELECT * FROM company WHERE name=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, name);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            company = new Company();
+            company.setId(resultSet.getLong("id"));
+            company.setName(resultSet.getString("name"));
+            company.setDescription(resultSet.getString("description"));
+            company.setEmail(resultSet.getString("email"));
+            company.setWebsite(resultSet.getString("website"));
+            company.setLocation(resultSet.getString("location"));
+            company.setPhoneNumber(resultSet.getString("phone_number"));
+            company.setLogo(resultSet.getString("logo"));
+            company.setLikes(resultSet.getInt("likes"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return company;
+}
+
+public Company getCompanyByEmail(String email) {
+    Company company = null;
+    try {
+        String query = "SELECT * FROM company WHERE email=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, email);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            company = new Company();
+            company.setId(resultSet.getLong("id"));
+            company.setName(resultSet.getString("name"));
+            company.setDescription(resultSet.getString("description"));
+            company.setEmail(resultSet.getString("email"));
+            company.setWebsite(resultSet.getString("website"));
+            company.setLocation(resultSet.getString("location"));
+            company.setPhoneNumber(resultSet.getString("phone_number"));
+            company.setLogo(resultSet.getString("logo"));
+            company.setLikes(resultSet.getInt("likes"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return company;
+}
+
+public Company getCompanyByWebsite(String website) {
+    Company company = null;
+    try {
+        String query = "SELECT * FROM company WHERE website=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, website);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            company = new Company();
+            company.setId(resultSet.getLong("id"));
+            company.setName(resultSet.getString("name"));
+            company.setDescription(resultSet.getString("description"));
+            company.setEmail(resultSet.getString("email"));
+            company.setWebsite(resultSet.getString("website"));
+            company.setLocation(resultSet.getString("location"));
+            company.setPhoneNumber(resultSet.getString("phone_number"));
+            company.setLogo(resultSet.getString("logo"));
+            company.setLikes(resultSet.getInt("likes"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return company;
+}
+
+public Company getCompanyByLocation(String location) {
+    Company company = null;
+    try {
+        String query = "SELECT * FROM company WHERE location=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, location);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            company = new Company();
+            company.setId(resultSet.getLong("id"));
+            company.setName(resultSet.getString("name"));
+            company.setDescription(resultSet.getString("description"));
+            company.setEmail(resultSet.getString("email"));
+            company.setWebsite(resultSet.getString("website"));
+            company.setLocation(resultSet.getString("location"));
+            company.setPhoneNumber(resultSet.getString("phone_number"));
+            company.setLogo(resultSet.getString("logo"));
+            company.setLikes(resultSet.getInt("likes"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return company;
+}
+public boolean companyNameExists(String companyName) {
+    try {
+        String query = "SELECT * FROM company WHERE name=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, companyName);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        return resultSet.next(); // If resultSet has next, company name exists
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+public Long getCompanyIdByNameAndPassword(String name, String password) {
+    Long companyId = 0l;
+    try {
+        String query = "SELECT id FROM company WHERE name=? AND password=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, password);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            companyId = resultSet.getLong("id");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return companyId;
+}
 
 }
+
+

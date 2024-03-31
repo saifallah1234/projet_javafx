@@ -4,8 +4,14 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import FSB.pro.DAO.FriendshipDAO;
+import FSB.pro.DAO.PostDAO;
 import FSB.pro.DAO.UserDAO;
+import FSB.pro.models.Post;
 import FSB.pro.models.User;
+import FSB.pro.utils.SceneSwitcher;
+import FSB.pro.utils.UserFetchImage;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 
 public class ProfileController {
@@ -40,7 +47,7 @@ public class ProfileController {
     private Label experienceLabel;
 
     @FXML
-    private ListView<String> feedListView;
+    private ListView<Post> feedListView;
 
     @FXML
     private TextField postTextField;
@@ -67,18 +74,34 @@ public class ProfileController {
     private Button viewFriendListButton;
 
     @FXML
-    private ListView<String> userFriendList;
+    private ListView<User> userFriendList;
+    @FXML
+    private Button showProfile;
+    @FXML
+    private Button openChat;
+    @FXML
+    private Button handleNotificationButton;
+    @FXML
+    private Button handleSettingsButton;
+    @FXML
+    private Button handleLogout;
+    
 
     public UserDAO userDAO = new UserDAO();
+    public FriendshipDAO friendshipDAO = new FriendshipDAO();
+    public PostDAO postDAO = new PostDAO();
     private long userId;
 
     private long id(long userId) {
         return this.userId = userId;
     }
+    public ProfileController(long userId){
+        this.userId = userId;
+    }
     User userProfile = userDAO.getUserById(userId);
 
     public void initialize() {
-        userImageView.setImage(fetchProfileImage());
+        userImageView.setImage(UserFetchImage.fetchProfileImage(userDAO.getUserById(userId).getPhoto()));
         usernameLabel.setText(fetchUsername());
         userOnlineList.getItems().addAll(fetchOnlineList());
         userOnlineCountLabel.setText("Online: " + fetchOnlineCount());
@@ -87,32 +110,12 @@ public class ProfileController {
         bioLabel.setText(userProfile.getBio());
         skillsLabel.setText("Skills:" + userProfile);
         projectsLabel.setText("Projects:\n" + userProfile.getProjects());
-        experienceLabel.setText("Experience:\n" + userProfile.getExperience());
-        List<String> userFeed = fetchUserFeed();
-        feedListView.getItems().addAll(userFeed);
-        List<String> userFriendList = fetchFriendList();
-        userFriendList.getItems().addAll(userFriendList);
+        experienceLabel.setText("Experience:\n" + userProfile.getExperiences());
+        ObservableList<Post> observableFeedList = FXCollections.observableArrayList(fetchUserFeed());
+        feedListView.setItems(observableFeedList);
+        ObservableList<User> observableFriendList = FXCollections.observableArrayList(fetchFriendList());
+        userFriendList.setItems(observableFriendList);
         userImageView.setImage(fetchUserImage());
-    }
-
-    private Image fetchProfileImage() {
-        
-        
-    
-        if (userProfile != null) {
-            String imagePath = userProfile.getPhoto(); // Assuming this is the file path stored in the database
-            File imageFile = new File(imagePath);
-    
-            if (imageFile.exists()) {
-                return new Image(imageFile.toURI().toString());
-            } else {
-                // Default image if the file doesn't exist
-                return new Image("/path/to/default/image.png");
-            }
-        }
-    
-        // Return null or default image if user not found or image path is null
-        return new Image("/path/to/default/image.png");
     }
 
     private String fetchUsername() {
@@ -130,23 +133,23 @@ public class ProfileController {
     }
 
     private int fetchOnlineCount() {
-        // Code to fetch online count
+        return (int) userDAO.getAllUsers().stream().filter(User::isLogged).count();
     }
 
-    private List<String> fetchUserFeed() {
-        // Code to fetch user feed
+    private List<Post> fetchUserFeed() {
+        return postDAO.getPostBySenderId(userId);
     }
 
     private int fetchFriendCount() {
-        // Code to fetch friend count
+        return userDAO.getUserById(userId).getFriends().size();
     }
 
-    private List<String> fetchFriendList() {
-        // Code to fetch friend list
+    private List<User> fetchFriendList() {
+       return friendshipDAO.getFriendsByUserId(userId);
     }
 
     private Image fetchUserImage() {
-        // Code to fetch user image
+        return new Image(userDAO.getUserById(userId).getPhoto());
     }
 
     @FXML
@@ -171,12 +174,16 @@ public class ProfileController {
 
     @FXML
     private void showProfile() {
-        // Code to show profile
+         Stage currentStage = (Stage) showProfile.getScene().getWindow();
+        UserMainProfileController profileController = SceneSwitcher.switchScene("UserMainProfileController.fxml", currentStage);
+        profileController.userId(userId);
     }
 
     @FXML
     private void openChat() {
-        // Code to open chat
+        Stage currentStage = (Stage) openChat.getScene().getWindow();
+        ChatController chatController = SceneSwitcher.switchScene("ChatView.fxml", currentStage);
+        chatController.userId(userId);
     }
 
     @FXML
@@ -191,17 +198,25 @@ public class ProfileController {
 
     @FXML
     private void handleLogout() {
-        // Code to handle logout button
+        Stage currentStage = (Stage) handleLogout.getScene().getWindow();
+
+        // Switch to the logout interface
+        SceneSwitcher.switchScene("LoginView.fxml", currentStage);
     }
 
     @FXML
     private void closeApplication(MouseEvent event) {
-        // Code to close application
+        Object source = event.getSource();
+        if (source instanceof Button) {
+            Button clickedButton = (Button) source;
+            Stage stage = (Stage) clickedButton.getScene().getWindow();
+            stage.close();
+        }
     }
 
     @FXML
     private void handleLikeButtonAction() {
-        String selectedPost = feedListView.getSelectionModel().getSelectedItem();
+        Post selectedPost = feedListView.getSelectionModel().getSelectedItem();
         if (selectedPost != null) {
             // Code to like post
         }
@@ -209,7 +224,7 @@ public class ProfileController {
 
     @FXML
     private void handleCommentButtonAction() {
-        String selectedPost = feedListView.getSelectionModel().getSelectedItem();
+        Post selectedPost = feedListView.getSelectionModel().getSelectedItem();
         if (selectedPost != null) {
             // Code to comment on post
         }
@@ -217,7 +232,7 @@ public class ProfileController {
 
     @FXML
     private void handleRepostButtonAction() {
-        String selectedPost = feedListView.getSelectionModel().getSelectedItem();
+        Post selectedPost = feedListView.getSelectionModel().getSelectedItem();
         if (selectedPost != null) {
             // Code to repost post
         }

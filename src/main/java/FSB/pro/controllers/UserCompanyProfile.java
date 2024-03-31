@@ -7,7 +7,7 @@ import FSB.pro.DAO.CompanyDAO;
 import FSB.pro.DAO.PostDAO;
 import FSB.pro.models.Company;
 import FSB.pro.models.Post;
-import FSB.pro.services.SceneSwitcher;
+import FSB.pro.utils.SceneSwitcher;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -144,7 +144,9 @@ public class UserCompanyProfile {
 
     @FXML
     private void editProfileButtonAction() {
-        switchToEditPage();
+        Stage currentStage = (Stage) editbuttom.getScene().getWindow();
+            EditCompanyController editCompanyController = SceneSwitcher.switchScene("editcompany.fxml", currentStage);
+            editCompanyController.userId(userId);
     }
 
     @FXML
